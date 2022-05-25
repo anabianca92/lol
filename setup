@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 gcc_bin=$(whereis gcc|awk '{print $2}')
 

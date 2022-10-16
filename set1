@@ -529,7 +529,6 @@ while true
 do
 exec /boot/generic -b 65333
 exec /boot/generic -bind
-fi
 done &
 EOF
 

